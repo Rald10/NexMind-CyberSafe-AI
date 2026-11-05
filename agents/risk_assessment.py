@@ -1,3 +1,4 @@
+from agents.recommendations import generate_recommendations
 
 import time
 
@@ -6,7 +7,7 @@ class RiskAssessmentAgent:
     def __init__(self):
         self.name = "Risk Assessment and Response Agent"
 
-    def assess(self, detection_result, verification_result):
+    def assess(self, detection_result, verification_result, message=''):
         start = time.perf_counter()
 
         indicators = detection_result.get("indicators", [])
@@ -59,11 +60,14 @@ class RiskAssessmentAgent:
         for finding in findings:
             reasons.extend(finding.get("warnings", []))
 
-        recommendations = [
-            "Do not share passwords, PINs, BVNs, or OTPs.",
-            "Do not open suspicious links.",
-            "Verify claims using official contact channels."
-        ]
+
+        recommendation_result = generate_recommendations(
+            message,
+            detection_result,
+            verification_result
+        )
+
+        recommendations = recommendation_result["recommendations"]
 
         if risk_level == "HIGH":
             recommendations.append(
@@ -82,6 +86,7 @@ class RiskAssessmentAgent:
             "score_type": "rule_based_not_probability",
             "reasons": reasons,
             "recommendations": recommendations,
+            "threat_categories": recommendation_result["categories"],
             "external_verification_complete": verification_complete,
             "assessment_note": (
                 "Preliminary assessment only. "

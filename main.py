@@ -10,6 +10,7 @@ from langgraph.graph import StateGraph, START, END
 from agents.detection import ThreatDetectionAgent
 from agents.verification import EvidenceVerificationAgent
 from agents.risk_assessment import RiskAssessmentAgent
+from telegram_bot.message_router import route_message
 
 app = FastAPI(title="NexMind CyberSafe AI")
 
@@ -45,8 +46,9 @@ def assess_risk(state: CyberSafeState):
     return {
         "risk_result": risk_agent.assess(
             state["detection_result"],
-            state["verification_result"]
-        )
+            state["verification_result"],
+            message=state['message']
+)
     }
 
 
@@ -90,6 +92,7 @@ TRACKER_DB_PATH = os.getenv(
 
 update_tracker = UpdateTracker(TRACKER_DB_PATH)
 
+
 @app.post("/telegram/webhook")
 async def telegram_webhook(request: Request):
     import hmac
@@ -114,17 +117,25 @@ async def telegram_webhook(request: Request):
             detail="Invalid webhook secret"
         )
 
+    update_id = None
+    claimed = False
+
     try:
-        payload = await request.json()
+        try:
+            payload = await request.json()
+        except (ValueError, UnicodeDecodeError):
+            raise HTTPException(
+                status_code=400,
+                detail='Invalid JSON payload'
+            )
 
-        update_id = (
-            payload.get("update_id")
-            if isinstance(payload, dict)
-            else None
-        )
+        if not isinstance(payload, dict):
+            raise HTTPException(status_code=400, detail="Invalid Telegram payload")
 
-        if not isinstance(update_id, int) or isinstance(update_id, bool):
-            raise ValueError("Missing or invalid update_id")
+        update_id = payload.get("update_id")
+
+        if type(update_id) is not int:
+            raise HTTPException(status_code=400, detail="Invalid update ID")
 
         if not update_tracker.claim(update_id):
             return {
@@ -133,70 +144,173 @@ async def telegram_webhook(request: Request):
                 "duplicate": True
             }
 
+        claimed = True
 
-        if not isinstance(payload, dict):
-            raise ValueError("Invalid update payload")
+        routed = route_message(
+            payload,
+            bot_username="NexmindCybersafe_bot"
+        )
 
-        message = payload.get("message") or {}
+        action = routed["action"]
+        message = routed["message"]
 
-        if not isinstance(message, dict):
-            return {"ok": True, "processed": False}
+        if action == "IGNORE":
+            update_tracker.mark_processed(update_id)
+            return {
+                "ok": True,
+                "processed": True,
+                "ignored": True
+            }
 
-        chat = message.get("chat") or {}
-        chat_id = chat.get("id")
-        text = message.get("text") or message.get("caption") or ""
-        is_forwarded = bool(message.get("forward_origin"))
+        chat_id = message.get("chat_id")
+        text = message.get("text", "")
 
-        if chat_id is None or not isinstance(text, str):
-            return {"ok": True, "processed": False}
+        if chat_id is None:
+            update_tracker.mark_processed(update_id)
+            return {
+                "ok": True,
+                "processed": True,
+                "ignored": True
+            }
 
-        if not text.strip():
-            return {"ok": True, "processed": False}
-
-        if text.startswith("/start"):
+        if action == "REPLY_HELP":
             reply = (
                 "Welcome to NexMind CyberSafe AI!\n\n"
-                "Send a suspicious message or link for analysis.\n"
+                "PRIVATE CHAT:\n"
+                "Send or forward a suspicious text message.\n\n"
+                "GROUP CHAT:\n"
+                "Use /check followed by suspicious text.\n\n"
+                "Commands: /start, /help, /check\n\n"
                 "Never share passwords, PINs, BVNs, or OTPs."
             )
 
-        elif len(text) > 4000:
+        elif action == "REPLY_APP":
             reply = (
-                "Please send a message under "
-                "4000 characters."
+                "CYBERSAFE AI — OPEN APP\\n\\n"
+                "Open our Telegram bot using the link below:\\n"
+                "https://t.me/NexmindCybersafe_bot\\n\\n"
+                "Type /start and use the existing "
+                "Mini App launch option."
             )
+
+        elif action == "REPLY_USAGE":
+            reply = (
+                "Usage: /check followed by the suspicious message.\n"
+                "Example: /check Your account will be blocked."
+            )
+
+        elif action == "REPLY_UNSUPPORTED_MEDIA":
+            reply = (
+                "I received your media message, but this version "
+                "cannot analyze images, screenshots, audio, or "
+                "documents directly. Please type or paste the "
+                "suspicious text instead. Do not include passwords "
+                "or other sensitive information."
+            )
+
+        elif action == "REPLY_UNKNOWN_COMMAND":
+            reply = (
+                "Unknown command. Use /help for instructions "
+                "or send a suspicious message for analysis."
+            )
+
+        elif action == "ANALYZE":
+            if not text.strip():
+                reply = "Please provide a suspicious message to analyze."
+
+            elif len(text) > 4000:
+                reply = (
+                    "Please send a message under 4000 characters."
+                )
+
+            else:
+                state = await asyncio.to_thread(
+                    cybersafe_graph.invoke,
+                    {"message": text}
+                )
+
+                risk = state["risk_result"]
+
+                reasons = "\n".join(
+                    "- " + str(item)
+                    for item in risk.get("reasons", [])
+                ) or "No matching patterns identified."
+
+                recommendations = "\n".join(
+                    "- " + str(item)
+                    for item in risk.get("recommendations", [])
+                ) or "Verify suspicious claims through official channels."
+
+                category_labels = {
+                    "bank_fraud": "Banking fraud",
+                    "credential_theft": "Credential theft",
+                    "fake_job": "Fake recruitment",
+                    "investment_scam": "Investment scam",
+                    "grant_scam": "Grant or prize scam",
+                    "account_takeover": "Account takeover",
+                }
+
+                categories = risk.get("threat_categories", [])
+
+                category_text = "\n".join(
+                    "- " + category_labels.get(
+                        category,
+                        category.replace("_", " ").title()
+                    )
+                    for category in categories
+                ) or "No specific category identified."
+
+
+                detection = state["detection_result"]
+
+                ml_prediction = detection.get(
+                    "ml_prediction", "Unavailable"
+                )
+
+                ml_confidence = detection.get(
+                    "ml_confidence"
+                )
+
+                if ml_confidence is not None:
+                    ml_confidence_text = (
+                        f"{float(ml_confidence) * 100:.2f}%"
+                    )
+                else:
+                    ml_confidence_text = "Unavailable"
+
+                ml_section = (
+                    "ML Model Analysis (Advisory)" + '\n'
+                    + f"Predicted class: {ml_prediction}" + '\n'
+                    + f"Model confidence: {ml_confidence_text}" + '\n'
+                    + "This model was trained on phishing emails. "
+                    + "Class meanings require confirmation from "
+                    + "training records. Predictions are not "
+                    + "verified threats." + '\n\n'
+                )
+                reply = (
+                    "CYBERSAFE AI SECURITY REPORT\n\n"
+                    f"Risk Level: {risk['risk_level']}\n"
+                    f"Heuristic Score: "
+                    f"{risk['heuristic_score']}/100\n\n"
+                    f"{ml_section}"
+                    f"Possible Threat Categories:\n"
+                    f"{category_text}\n\n"
+                    f"Reasons:\n{reasons}\n\n"
+                    f"Recommended Actions:\n"
+                    f"{recommendations}\n\n"
+                    "External verification: Incomplete.\n"
+                    "This is a preliminary assessment, "
+                    "not a probability of fraud. "
+                    "A low score does not establish safety."
+                )
 
         else:
-            state = await asyncio.to_thread(
-                cybersafe_graph.invoke,
-                {"message": text}
-            )
-
-            risk = state["risk_result"]
-
-            reasons = "\n".join(
-                "- " + item
-                for item in risk["reasons"]
-            ) or "No matching patterns identified."
-
-            recommendations = "\n".join(
-                "- " + item
-                for item in risk["recommendations"]
-            )
-
-            reply = (
-                "CYBERSAFE AI SECURITY REPORT\n\n"
-                f"Risk Level: {risk['risk_level']}\n"
-                f"Heuristic Score: "
-                f"{risk['heuristic_score']}/100\n\n"
-                f"Reasons:\n{reasons}\n\n"
-                f"Recommendations:\n"
-                f"{recommendations}\n\n"
-                "External verification: Incomplete.\n"
-                "This is a preliminary assessment, "
-                "not a probability of fraud. "
-                "A low score does not establish safety."
-            )
+            update_tracker.mark_processed(update_id)
+            return {
+                "ok": True,
+                "processed": True,
+                "ignored": True
+            }
 
         async with Bot(token=token) as bot:
             await bot.send_message(
@@ -206,15 +320,22 @@ async def telegram_webhook(request: Request):
 
         update_tracker.mark_processed(update_id)
 
-        return {"ok": True, "processed": True}
+        return {
+            "ok": True,
+            "processed": True,
+            "action": action
+        }
 
+    except HTTPException:
+        raise
     except Exception:
-        if "update_id" in locals() and type(update_id) is int:
+        if claimed and type(update_id) is int:
             update_tracker.release(update_id)
 
         logging.exception(
             "CyberSafe AI webhook processing failed"
         )
+
         raise HTTPException(
             status_code=500,
             detail="Webhook processing failed"

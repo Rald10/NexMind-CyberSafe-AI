@@ -6,6 +6,16 @@ class ThreatDetectionAgent:
 
     def __init__(self):
         self.name = "Threat Detection Agent"
+        from pathlib import Path
+        import joblib
+
+        model_path = (
+            Path(__file__).resolve().parents[1]
+            / "ml/models/phishing_hybrid_tfidf_logreg_step9g.joblib"
+        )
+
+        self.ml_model = joblib.load(model_path)
+
 
         self.patterns = {
             "urgency": [
@@ -59,8 +69,26 @@ class ThreatDetectionAgent:
 
         indicators = sorted(set(indicators))
 
+
+        # ML provides an additional signal, not a final verdict.
+        probabilities = self.ml_model.predict_proba([message])[0]
+        classes = list(self.ml_model.classes_)
+
+        class_probabilities = {
+            str(label): round(float(probability), 6)
+            for label, probability in zip(classes, probabilities)
+        }
+
+        ml_prediction = self.ml_model.predict([message])[0]
+
+        ml_confidence = max(float(p) for p in probabilities)
+
         result = {
             "agent": self.name,
+            "ml_prediction": str(ml_prediction),
+            "ml_confidence": round(ml_confidence, 6),
+            "ml_class_probabilities": class_probabilities,
+            "ml_advisory_only": True,
             "indicators": indicators,
             "urls": urls,
             "indicator_count": len(indicators),
