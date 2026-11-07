@@ -1,172 +1,246 @@
 
-<div align="center">
-
 # 🛡️ NexMind CyberSafe AI
 
-### Intelligent Multi-Agent Cybersecurity Assistant
-
-**Detect Suspicious Messages • Assess Risks • Stay CyberSafe**
-
-[![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)](https://www.python.org/)
-[![LangGraph](https://img.shields.io/badge/LangGraph-Multi--Agent-purple)](https://www.langchain.com/langgraph)
-[![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
-[![Telegram](https://img.shields.io/badge/Telegram-Live_Bot-26A5E4?logo=telegram)](https://t.me/NexmindCybersafe_bot)
-![Status](https://img.shields.io/badge/Status-MVP_Live-brightgreen)
+### AI-Powered Cybersecurity Threat Detection and Awareness Assistant
 
 **Developed by Team NexMind | Agentathon Project**
 
-[🚀 Try Live Bot](https://t.me/NexmindCybersafe_bot) ·
-[📖 Documentation](#-project-overview) ·
-[⚙️ Installation](#️-installation) ·
-[🗺️ Roadmap](#️-development-roadmap)
+[![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Telegram](https://img.shields.io/badge/Telegram-Bot-26A5E4?logo=telegram)](https://t.me/NexmindCybersafe_bot)
+[![Render](https://img.shields.io/badge/Render-Deployed-46E3B7?logo=render)](https://nexmind-cybersafe-ai.onrender.com)
 
-</div>
-
----
-
-## 📖 Project Overview
-
-**NexMind CyberSafe AI** is a multi-agent cybersecurity assistant designed to help users identify potentially fraudulent messages, phishing attempts, and online scams.
-
-Built with **Python, LangGraph, FastAPI, and Telegram**, CyberSafe AI coordinates three specialized agents to analyze suspicious messages and provide understandable security assessments.
-
-Users can send or forward suspicious Telegram text messages directly to the bot without copying and pasting them into another application.
-
-> **Our Mission:** Make practical cybersecurity guidance accessible to everyone, including users without technical cybersecurity knowledge.
+**[Try CyberSafe AI on Telegram](https://t.me/NexmindCybersafe_bot)** | **[GitHub Repository](https://github.com/Rald10/NexMind-CyberSafe-AI)**
 
 ---
 
-## 🎯 Problem Statement
+## 📖 Overview
 
-Phishing attacks, online fraud, impersonation, and deceptive financial messages pose serious cybersecurity challenges.
+**CyberSafe AI** is a Telegram-based cybersecurity assistant developed by **Team NexMind** to help users identify potentially harmful messages, phishing attempts, credential theft, and suspicious online activities.
 
-Many users struggle to identify suspicious communications or understand the precautions needed to protect themselves.
+The system combines:
 
-**CyberSafe AI addresses this problem through:**
+- Machine learning-based phishing classification.
+- Rule-based cybersecurity threat detection.
+- Three specialized AI workflow agents.
+- LangGraph orchestration.
+- Heuristic risk scoring.
+- Automated cybersecurity guidance.
+- Telegram bot integration.
 
-- 🔍 Automated detection of suspicious message indicators.
-- 🤖 Coordinated analysis using three specialized agents.
-- ⚠️ Explainable risk assessments.
-- 🔐 Practical cybersecurity recommendations.
-- 📱 Accessible interaction through Telegram.
-
----
-
-## ✨ Key Features
-
-| Feature | Description | Status |
-|---|---|---|
-| 🤖 Telegram Bot | Automatic message analysis | ✅ Live |
-| 📩 Forwarded Messages | Analyze forwarded Telegram text | ✅ Live |
-| 🔍 Threat Detection | Identify suspicious indicators | ✅ Implemented |
-| 🧾 Evidence Inspection | Preliminary offline URL checks | ✅ Implemented |
-| ⚠️ Risk Assessment | LOW, MEDIUM, HIGH classifications | ✅ Implemented |
-| 🧠 LangGraph | Three-agent workflow coordination | ✅ Implemented |
-| 📊 Security Reports | Reasons and safety recommendations | ✅ Implemented |
-| 🔒 Duplicate Tracking | SQLite-based update tracking | ✅ MVP |
-| 🌐 Cloud Deployment | FastAPI hosted on Render | ✅ Live |
-| 🖼️ Screenshot Analysis | Analyze suspicious images | 🔜 Planned |
-| 🌍 Multilingual Support | Nigerian Pidgin and other languages | 🔜 Planned |
-| 🛡️ Threat Intelligence | External domain reputation checks | 🔜 Planned |
+CyberSafe AI provides preliminary cybersecurity assessments and practical safety guidance.
 
 ---
 
-## 🧠 Multi-Agent Architecture
+## 🎯 Project Objectives
 
-CyberSafe AI consists of three specialized agents coordinated through **LangGraph**.
+1. Analyze suspicious messages for cybersecurity threats.
+2. Identify phishing-related indicators using machine learning.
+3. Detect suspicious requests for OTPs, passwords, PINs, and sensitive information.
+4. Evaluate threat severity using heuristic risk scores.
+5. Provide understandable explanations of cybersecurity risks.
+6. Deliver automated cybersecurity reports through Telegram.
+7. Coordinate threat analysis using a multi-agent workflow.
 
-```mermaid
-flowchart TD
-    A["📱 Telegram User"] --> B["FastAPI Webhook"]
-    B --> C["LangGraph Orchestrator"]
-    C --> D["🔍 Agent 1: Threat Detection"]
-    D --> E["🧾 Agent 2: Evidence Verification"]
-    E --> F["⚠️ Agent 3: Risk Assessment"]
-    F --> G["🛡️ Security Report"]
-    G --> H["📱 Telegram User"]
+---
+
+## ✨ Implemented Features
+
+### 1. Suspicious Message Analysis
+
+CyberSafe AI analyzes text messages for:
+
+- Urgency and psychological pressure.
+- Requests for sensitive information.
+- Suspicious instructions.
+- Financial and investment scam indicators.
+- Credential theft attempts.
+- Suspicious URL characteristics.
+
+### 2. Machine Learning Phishing Detection
+
+CyberSafe AI includes a trained phishing detection classifier.
+
+| Component | Implementation |
+|---|---|
+| Algorithm | Logistic Regression |
+| Feature extraction | Hybrid word and character TF-IDF |
+| Training dataset | 17,515 cleaned phishing email records |
+| Classification | Binary |
+| Class 0 | Non-phishing |
+| Class 1 | Phishing |
+| Decision threshold | 0.50 |
+| Model persistence | Joblib |
+
+The trained classifier is preserved and loaded for inference without retraining.
+
+Model confidence is not a verified probability of fraud.
+
+### 3. Three-Agent Cybersecurity Architecture
+
+**Agent 1 — Threat Detection**
+
+Analyzes messages for phishing indicators, suspicious actions, urgency, and requests for sensitive information.
+
+**Agent 2 — Evidence Verification**
+
+Performs preliminary offline checks, including suspicious URL analysis.
+
+**Agent 3 — Risk Assessment**
+
+Combines detection results into a structured report containing risk classification, supporting reasons, and security recommendations.
+
+### 4. Risk Assessment
+
+The system generates:
+
+- Heuristic risk scores from 0 to 100.
+- LOW, MEDIUM, and HIGH risk classifications.
+- Possible threat categories.
+- Reasons supporting the assessment.
+- Recommended cybersecurity actions.
+
+### 5. Telegram Bot
+
+The operational Telegram bot supports:
+
+- Direct text messages.
+- Forwarded text messages.
+- Automated cybersecurity analysis.
+- Phishing classification.
+- Structured security reports.
+- Webhook-based communication.
+- Duplicate-update protection.
+
+**Telegram Bot:** [@NexmindCybersafe_bot](https://t.me/NexmindCybersafe_bot)
+
+---
+
+## 🏗️ System Architecture
+
+```text
+                 TELEGRAM USER
+                       |
+                       v
+                TELEGRAM BOT API
+                       |
+                       v
+                 FASTAPI WEBHOOK
+                       |
+                       v
+               MESSAGE PROCESSING
+                       |
+                       v
+              LANGGRAPH WORKFLOW
+                       |
+          +------------+------------+
+          |            |            |
+          v            v            v
+       AGENT 1      AGENT 2      AGENT 3
+       Threat       Evidence     Risk
+       Detection    Verification Assessment
+          |            |            |
+          +------------+------------+
+                       |
+                       v
+             CYBERSECURITY REPORT
+                       |
+                       v
+                 TELEGRAM USER
 ```
 
-### 🔍 Agent 1 — Threat Detection
+---
 
-Identifies suspicious indicators such as:
+## 🧪 Groq LLM and Vision Integration
 
-- Urgent or threatening language.
-- Requests for passwords, PINs, BVNs, or OTPs.
-- Suspicious instructions and links.
-- Financial incentives or potentially fraudulent offers.
+CyberSafe AI includes Groq integration code developed and tested in Google Colab.
 
-**Output:** Threat indicators and extracted URLs.
+### Groq Text Analysis
 
-### 🧾 Agent 2 — Evidence Verification
+The development implementation uses `openai/gpt-oss-20b` for contextual cybersecurity explanations.
 
-Performs preliminary offline inspection of suspicious URLs and available indicators.
+### Groq Vision Analysis
 
-**Output:** URL warnings, findings, and verification status.
+The development implementation includes:
 
-> External threat-intelligence verification is planned for a future release.
+- Screenshot text extraction.
+- Identification of suspicious message indicators.
+- Structured extraction of cybersecurity evidence.
+- Integration with the phishing classifier.
 
-### ⚠️ Agent 3 — Risk Assessment
+A recorded Colab screenshot experiment produced a **93.46% phishing-class probability**.
 
-Combines findings from the previous agents to produce:
+### Production Integration Status
 
-- A heuristic risk score from 0 to 100.
-- LOW, MEDIUM, or HIGH risk classification.
-- Explanations of suspicious indicators.
-- Recommended cybersecurity precautions.
+Groq integration code was merged into the production repository through **Pull Request #2** and deployed successfully on Render.
 
-**Note:** Risk scores are heuristic indicators, not calibrated probabilities of fraud.
+At the latest confirmed check, the required `GROQ_API_KEY` was missing from the Render environment.
+
+Therefore, live Groq contextual explanations and Telegram screenshot analysis have not yet been confirmed operational.
+
+---
+
+## 📱 Example CyberSafe AI Security Report
+
+```text
+CYBERSAFE AI SECURITY REPORT
+
+Risk Level: MEDIUM
+Heuristic Score: 55/100
+
+ML Model Analysis (Advisory)
+Predicted class: 1
+Model confidence: 92.50%
+
+Possible Threat Categories:
+- Credential theft
+
+Reasons:
+- Message mentions sensitive credentials
+- Message uses urgency or pressure
+
+Recommended Actions:
+- Never share OTPs, PINs or passwords.
+- Change compromised credentials.
+- Independently verify urgent requests.
+
+External verification: Incomplete.
+```
+
+The assessment is preliminary and does not establish that a message is definitively fraudulent or safe.
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Layer | Technology |
+| Technology | Purpose |
 |---|---|
-| Programming | Python |
-| Multi-Agent Orchestration | LangGraph |
-| Backend API | FastAPI |
-| ASGI Server | Uvicorn |
-| Messaging | Telegram Bot API |
-| Database | SQLite |
-| Development | Google Colab |
-| Version Control | GitHub |
-| Hosting | Render |
-
----
-
-## 📂 Project Structure
-
-```text
-NexMind-CyberSafe-AI/
-│
-├── agents/
-│   ├── __init__.py
-│   ├── detection.py
-│   ├── verification.py
-│   └── risk_assessment.py
-│
-├── main.py
-├── update_tracker.py
-├── requirements.txt
-├── render.yaml
-├── .gitignore
-└── README.md
-```
+| Python | Application development |
+| FastAPI | Backend and webhook |
+| LangGraph | Multi-agent orchestration |
+| Scikit-learn | Phishing classification |
+| TF-IDF | Text feature extraction |
+| Logistic Regression | Machine learning model |
+| Joblib | Model persistence |
+| SQLite | Telegram update tracking |
+| Telegram Bot API | User interaction |
+| Groq SDK | LLM and vision integration |
+| Google Colab | Development and testing |
+| GitHub | Version control |
+| Render | Cloud hosting |
 
 ---
 
 ## ⚙️ Installation
 
-### 1️⃣ Clone the Repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Rald10/NexMind-CyberSafe-AI.git
 cd NexMind-CyberSafe-AI
 ```
 
-For private repositories, GitHub access is required.
-
-### 2️⃣ Create a Virtual Environment
+### 2. Create a Virtual Environment
 
 ```bash
 python -m venv .venv
@@ -174,7 +248,7 @@ python -m venv .venv
 
 Activate on Windows:
 
-```powershell
+```bash
 .venv\Scripts\activate
 ```
 
@@ -184,199 +258,159 @@ Activate on Linux/macOS:
 source .venv/bin/activate
 ```
 
-### 3️⃣ Install Dependencies
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4️⃣ Configure Environment Variables
+### 4. Configure Environment Variables
 
-Set the following variables securely:
+Configure the Telegram credentials and application settings required by the deployment.
+
+For Groq integration:
 
 ```env
-TELEGRAM_BOT_TOKEN=your_telegram_bot_token
-TELEGRAM_WEBHOOK_SECRET=your_secure_webhook_secret
-CYBERSAFE_TRACKER_DB=telegram_updates.db
+GROQ_API_KEY=your_groq_api_key
 ```
 
-**Never commit actual tokens or secrets to GitHub.**
+Never commit actual API keys or Telegram bot tokens to GitHub.
 
-### 5️⃣ Run the Application
+### 5. Start the Application
 
 ```bash
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-Check the health endpoint:
+Health endpoint:
 
 ```text
-http://localhost:8000/health
+GET /health
 ```
 
-Expected response:
+Telegram webhook endpoint:
 
-```json
-{
-  "status": "ok",
-  "service": "CyberSafe AI"
-}
+```text
+POST /telegram/webhook
 ```
-
-Telegram webhook functionality requires a public HTTPS endpoint and webhook registration.
 
 ---
 
-## 📱 How to Use CyberSafe AI
+## 🚀 Deployment
 
-<div align="center">
+CyberSafe AI is deployed on Render.
 
-### 🚀 [CLICK HERE TO OPEN CYBERSAFE AI](https://t.me/NexmindCybersafe_bot)
+**Production Backend:**
 
-</div>
+https://nexmind-cybersafe-ai.onrender.com
 
-**Step 1:** Open the Telegram bot.
+**Health Endpoint:**
 
-**Step 2:** Tap **Start**.
+https://nexmind-cybersafe-ai.onrender.com/health
 
-**Step 3:** Send or forward a suspicious text message.
+**Telegram Bot:**
 
-**Step 4:** Receive a preliminary cybersecurity assessment.
+https://t.me/NexmindCybersafe_bot
 
-### Example Message
+### Latest Recorded Deployment
 
-> URGENT! Your bank account will be blocked. Click this link and send your OTP immediately.
-
-### Example Security Assessment
-
-| Assessment | Result |
+| Detail | Value |
 |---|---|
-| Risk Level | 🔴 HIGH |
-| Heuristic Score | 80/100 |
-| Urgency Detected | Yes |
-| Sensitive Information Request | Yes |
-| Suspicious Action | Yes |
-
-**Recommendations:**
-
-- Never share OTPs, PINs, or passwords.
-- Avoid opening suspicious links.
-- Verify financial requests through official channels.
-- Report suspected fraud to appropriate authorities.
+| Pull Request | #2 |
+| Upgrade | Groq LLM and Vision Integration |
+| Merge commit | `973bf3d` |
+| Deployment method | Render Auto-Deploy |
+| Deployment result | Live |
 
 ---
 
-## 🧪 Testing and Evaluation
+## 🧪 Testing and Validation
 
-The MVP has passed functional tests covering:
-
-- Individual agent execution.
-- LangGraph workflow orchestration.
-- FastAPI health endpoint.
-- Telegram webhook authentication.
-- Forwarded-message processing.
-- SQLite duplicate tracking.
-- Application reload persistence tests.
-- Live direct-message responses.
-- Live forwarded-message responses.
-
-**Future evaluation metrics:**
-
-- Precision.
-- Recall.
-- F1-score.
-- False-positive rate.
-- Response latency.
-- Agent ablation performance.
-
-Functional testing does not establish real-world phishing detection accuracy.
-
----
-
-## 🗺️ Development Roadmap
-
-### ✅ Phase 1 — Functional MVP
-
-- [x] Three specialized agents.
-- [x] LangGraph orchestration.
-- [x] Telegram bot integration.
-- [x] Forwarded-message analysis.
-- [x] Risk assessment and recommendations.
-- [x] Render deployment.
-
-### 🔄 Phase 2 — Security and Reliability
-
-- [ ] Durable database storage.
-- [ ] Robust webhook retry and recovery.
-- [ ] Privacy and data-retention controls.
-- [ ] User feedback functionality.
-- [ ] Monitoring and automated testing.
-
-### 🔜 Phase 3 — Advanced Cybersecurity
-
-- [ ] Nigerian-specific scam detection categories.
-- [ ] External threat-intelligence integration.
-- [ ] Official-domain verification.
-- [ ] Screenshot-based phishing detection.
-- [ ] Machine-learning-based classification.
-- [ ] Nigerian Pidgin and multilingual support.
-
-### 🔬 Phase 4 — Research and Evaluation
-
-- [ ] Build a labeled Nigerian scam-message dataset.
-- [ ] Evaluate individual agents.
-- [ ] Conduct comparative experiments.
-- [ ] Perform ablation studies.
-- [ ] Document findings for research publication.
+| Component | Recorded result |
+|---|---|
+| FastAPI health endpoint | Passed |
+| Telegram webhook connection | Passed |
+| Three-agent workflow | Passed |
+| Phishing classifier inference | Passed |
+| Telegram text analysis | Operational |
+| Telegram automatic responses | Operational |
+| Duplicate-update protection | Tested |
+| Groq text analysis in Colab | Passed |
+| Groq screenshot analysis in Colab | Passed |
+| Offline upgrade smoke tests | Passed |
+| GitHub PR #2 merge | Successful |
+| Render upgrade deployment | Live |
+| Groq contextual analysis on live Telegram | Not confirmed |
+| Telegram screenshot analysis in production | Not confirmed |
 
 ---
 
 ## 🔐 Security and Privacy
 
-CyberSafe AI follows basic security practices:
+The implementation includes:
 
-- Telegram credentials are configured through environment variables.
-- Webhook requests are authenticated using a secret token.
-- Suspicious URLs are not automatically visited by the current verification agent.
-- SQLite tracks processed Telegram updates.
-- Users deliberately submit messages for analysis.
+- Telegram webhook secret validation.
+- Duplicate-update protection.
+- Environment-variable-based configuration.
+- Preliminary risk explanations.
+- Disclosure of incomplete external verification.
 
-**Known limitations:** The MVP uses heuristic detection, and free cloud hosting does not guarantee uninterrupted availability or durable local storage.
+CyberSafe AI does not guarantee detection of every cybersecurity threat.
 
-Users should avoid submitting unnecessary sensitive personal information.
+Users should avoid submitting real passwords, OTPs, PINs, or other sensitive credentials.
 
 ---
 
-## 👥 Meet Team NexMind
+## 👥 Development Team
 
-**Team NexMind** is a five-member technology team focused on building accessible solutions using multi-agent systems.
+**Team Name:** NexMind
 
-**Project:** CyberSafe AI
+**Project Name:** CyberSafe AI
 
-**Competition:** Agentathon
+**Team Size:** 5 Members
 
-**Focus:** Cybersecurity, AI Agents, Digital Safety, and Responsible Technology.
+**Project Category:** AI-Powered Cybersecurity Assistant
+
+**Development Approach:** Multi-agent AI, machine learning, and Telegram integration.
+
+---
+
+## 📌 Current Project Status
+
+### Operational
+
+- Telegram text analysis.
+- Machine learning phishing classification.
+- Three-agent cybersecurity workflow.
+- Heuristic risk scoring.
+- Automated cybersecurity reports.
+- Render-hosted FastAPI backend.
+
+### Developed and Deployed but Not Yet Verified Live
+
+- Groq contextual text explanations.
+- Telegram screenshot analysis using Groq Vision.
 
 ---
 
 ## ⚠️ Disclaimer
 
-CyberSafe AI provides preliminary cybersecurity assessments for educational and informational purposes.
+CyberSafe AI provides preliminary cybersecurity assessments for awareness and educational purposes.
 
-It does not guarantee that a message, sender, or website is safe or fraudulent.
+Its predictions, scores, and explanations should not be treated as definitive proof that content is malicious or safe.
 
-Always independently verify suspicious claims through trusted official channels.
+External verification is identified as incomplete when the system has not independently verified a claim or link.
 
 ---
 
-<div align="center">
+## 🔗 Project Links
 
-### 🛡️ Stay Alert. Stay Secure. Stay CyberSafe.
+- **GitHub:** https://github.com/Rald10/NexMind-CyberSafe-AI
+- **Telegram:** https://t.me/NexmindCybersafe_bot
+- **Backend:** https://nexmind-cybersafe-ai.onrender.com
 
-**Built by Team NexMind**
+---
 
-[🚀 Launch Telegram Bot](https://t.me/NexmindCybersafe_bot)
+**Developed by Team NexMind 🛡️**
 
-⭐ Star this repository to support the project!
-
-</div>
+*CyberSafe AI — Helping users recognize digital threats through intelligent cybersecurity analysis.*
